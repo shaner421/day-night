@@ -1,0 +1,82 @@
+[gd_scene load_steps=10 format=3 uid="uid://ohh0ilrp6v20"]
+
+[ext_resource type="Shader" path="res://Day&Night/shaders/day&night.gdshader" id="1_565bs"]
+[ext_resource type="Script" path="res://Day&Night/day&night.gd" id="1_638pv"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ixgg3"]
+shader = ExtResource("1_565bs")
+shader_parameter/sky_color = Color(0.619184, 0.764235, 1, 1)
+shader_parameter/horizon_color = Color(0.856143, 0.911333, 0.999999, 1)
+shader_parameter/horizon_width = 0.05
+shader_parameter/sun_col = Color(1, 1, 1, 1)
+shader_parameter/sun_size = 0.05
+shader_parameter/sun_blur = 0.3
+shader_parameter/moon_col = Color(1, 1, 1, 1)
+shader_parameter/moon_size = 0.01
+shader_parameter/moon_blur = 0.3
+shader_parameter/stars_speed = 1.0
+
+[sub_resource type="Sky" id="Sky_mna5t"]
+sky_material = SubResource("ShaderMaterial_ixgg3")
+
+[sub_resource type="Environment" id="Environment_ahm36"]
+background_mode = 2
+sky = SubResource("Sky_mna5t")
+ambient_light_source = 3
+reflected_light_source = 2
+
+[sub_resource type="SphereMesh" id="SphereMesh_uom8p"]
+radius = 0.25
+height = 0.5
+
+[sub_resource type="BoxMesh" id="BoxMesh_v3e1a"]
+size = Vector3(0.5, 0.5, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ftj7u"]
+cull_mode = 2
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.423378, 0.241864, 0.127881, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_aa426"]
+lightmap_size_hint = Vector2i(12, 12)
+size = Vector2(1000, 1000)
+
+[node name="Day&night" type="Node3D"]
+script = ExtResource("1_638pv")
+time_of_day = 1290.0
+advance_time = true
+time_interval = 150.0
+
+[node name="gimbal" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.227042, 0.97373, 0, -0.97373, 0.227042, 0, 0, 0)
+
+[node name="sun" type="DirectionalLight3D" parent="gimbal"]
+transform = Transform3D(1, 0, 0, 0, 1.00015, 9.31323e-10, 0, 0, 1.00015, 0, -1.49012e-08, 10)
+shadow_enabled = true
+
+[node name="moon" type="DirectionalLight3D" parent="gimbal"]
+transform = Transform3D(1, 0, 0, 0, -1.00015, 8.74361e-08, 0, -8.74361e-08, -1.00015, 0, 0, -10)
+light_color = Color(0.0588235, 0.0588235, 0.286275, 1)
+light_energy = 0.01
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ahm36")
+
+[node name="demo" type="Node3D" parent="."]
+visible = false
+
+[node name="sphere" type="MeshInstance3D" parent="demo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.455517, 0.244592, -0.31432)
+gi_mode = 2
+mesh = SubResource("SphereMesh_uom8p")
+
+[node name="box" type="MeshInstance3D" parent="demo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.247134, 0.250929, 0.410766)
+gi_mode = 2
+mesh = SubResource("BoxMesh_v3e1a")
+
+[node name="ground" type="MeshInstance3D" parent="demo"]
+material_override = SubResource("StandardMaterial3D_ftj7u")
+gi_mode = 2
+mesh = SubResource("PlaneMesh_aa426")
