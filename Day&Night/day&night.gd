@@ -41,6 +41,18 @@
 ## determines the moon's blur amount; is a float range from 0.01-1.
 @export_range(0.01,1.0) var moon_blur:float = 0.3
 
+@export_subgroup("Scattering Values")
+@export_range(0.0,1.0) var mie_strength:float = 0.5
+@export_range(0.0,1.0) var mie_directional_factor:float = 0.9
+@export_color_no_alpha var mie_colour:Color = Color(0.76, 0.4, 0.2)
+
+@export_range(0.0,1.0) var rayleigh_strength:float = 0.5
+@export_color_no_alpha var rayleigh_colour:Color = Color(0.26, 0.41, 0.58)
+@export_subgroup("Stars Values")
+@export var stars_noise_texture:NoiseTexture2D = preload("res://Day&Night/resources/starmap.tres")
+@export_range(0.0,1.0) var stars_density:float = 0.8
+@export_range(0.0,1.0) var stars_intensity:float = 0.5
+@export_color_no_alpha var stars_colour:Color = Color(1.0, 0.95, 0.8)
 #
 # internal variables
 #
@@ -75,6 +87,8 @@ func _physics_process(delta: float) -> void:
 	update_brightness()
 	update_color()
 	update_sun_moon()
+	update_scattering()
+	update_stars()
 
 #
 # custom functions
@@ -100,6 +114,21 @@ func update_color():
 	sky_shader.set_shader_parameter("sky_color", sky_color.gradient.sample(time_remap+0.5))
 	sky_shader.set_shader_parameter("horizon_color", horizon_color.gradient.sample(time_remap))
 	sky_shader.set_shader_parameter("horizon_width", horizon_dist.sample(time_remap))
+	sky_shader.set_shader_parameter("time_of_day", time_of_day)
+
+func update_scattering():
+	sky_shader.set_shader_parameter("mie_strength",mie_strength)
+	sky_shader.set_shader_parameter("mie_directional_factor",mie_directional_factor)
+	sky_shader.set_shader_parameter("mie_color",mie_colour)
+	
+	sky_shader.set_shader_parameter("rayleigh_strength",rayleigh_strength)
+	sky_shader.set_shader_parameter("rayleigh_color",rayleigh_colour)
+
+func update_stars():
+	sky_shader.set_shader_parameter("stars_density",stars_density)
+	sky_shader.set_shader_parameter("stars_intensity",stars_intensity)
+	sky_shader.set_shader_parameter("stars_color",stars_colour)
+	sky_shader.set_shader_parameter("stars_noise_texture",stars_noise_texture)
 
 ## this function updates the size, colour, and blur of our sun+moon in the sky shader.
 func update_sun_moon():

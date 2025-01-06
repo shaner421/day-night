@@ -1,19 +1,30 @@
-[gd_scene load_steps=10 format=3 uid="uid://ohh0ilrp6v20"]
+[gd_scene load_steps=11 format=3 uid="uid://ohh0ilrp6v20"]
 
 [ext_resource type="Shader" path="res://Day&Night/shaders/day&night.gdshader" id="1_565bs"]
 [ext_resource type="Script" path="res://Day&Night/day&night.gd" id="1_638pv"]
+[ext_resource type="Texture2D" uid="uid://c1872fjsjifrj" path="res://Day&Night/resources/starmap.tres" id="3_pl13n"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ixgg3"]
 shader = ExtResource("1_565bs")
 shader_parameter/sky_color = Color(0.619184, 0.764235, 1, 1)
-shader_parameter/horizon_color = Color(0.853192, 0.909512, 0.999999, 1)
+shader_parameter/horizon_color = Color(0.855068, 0.910669, 0.999999, 1)
 shader_parameter/horizon_width = 0.05
-shader_parameter/sun_col = Color(0.94902, 0.847059, 0.721569, 1)
+shader_parameter/sun_col = Color(1, 1, 1, 1)
 shader_parameter/sun_size = 0.06
-shader_parameter/sun_blur = 0.3
-shader_parameter/moon_col = Color(0.6, 0.619608, 0.564706, 1)
+shader_parameter/sun_blur = 0.15
+shader_parameter/moon_col = Color(1, 1, 1, 1)
 shader_parameter/moon_size = 0.03
-shader_parameter/moon_blur = 0.3
+shader_parameter/moon_blur = 0.2
+shader_parameter/mie_strength = 0.4
+shader_parameter/mie_directional_factor = 0.9
+shader_parameter/mie_color = Color(0.76, 0.4, 0.2, 1)
+shader_parameter/rayleigh_strength = 0.5
+shader_parameter/rayleigh_color = Color(0.26, 0.41, 0.58, 1)
+shader_parameter/stars_density = 0.201
+shader_parameter/stars_color = Color(1, 1, 1, 1)
+shader_parameter/stars_intensity = 0.649
+shader_parameter/time_of_day = 1200.0
+shader_parameter/stars_noise_texture = ExtResource("3_pl13n")
 
 [sub_resource type="Sky" id="Sky_mna5t"]
 sky_material = SubResource("ShaderMaterial_ixgg3")
@@ -42,10 +53,18 @@ size = Vector2(1000, 1000)
 
 [node name="Day&night" type="Node3D"]
 script = ExtResource("1_638pv")
-time_of_day = 1000
+time_interval = 200.0
+sun_colour = Color(1, 1, 1, 1)
+sun_blur = 0.15
+moon_colour = Color(1, 1, 1, 1)
+moon_blur = 0.2
+mie_strength = 0.4
+stars_density = 0.201
+stars_intensity = 0.649
+stars_colour = Color(1, 1, 1, 1)
 
 [node name="gimbal" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -0.499921, 0.865889, 0, -0.865889, -0.499921, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1.19231e-08, 0.999852, 0, -0.999852, 1.19231e-08, 0, 0, 0)
 
 [node name="sun" type="DirectionalLight3D" parent="gimbal"]
 transform = Transform3D(1, 0, 0, 0, 1.00015, 9.31323e-10, 0, 0, 1.00015, 0, -1.49012e-08, 10)
@@ -77,3 +96,6 @@ mesh = SubResource("BoxMesh_v3e1a")
 material_override = SubResource("StandardMaterial3D_ftj7u")
 gi_mode = 2
 mesh = SubResource("PlaneMesh_aa426")
+
+[node name="Camera3D" type="Camera3D" parent="demo"]
+transform = Transform3D(0.986564, 0, 0.163378, 0, 1, 0, -0.163378, 0, 0.986564, 1.11357, 0.442094, 2.09612)
